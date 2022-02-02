@@ -1,5 +1,6 @@
 from core.zone import line
 
+
 def check_presence(player, players) -> None:
     e = "Player not in players list."
     if player not in players:
@@ -31,8 +32,10 @@ def check_cooldown(action, player, history) -> None:
         c1 = event.player == player
         c2 = event_name == "Pass"
         c3 = event_name == action_name
-        if c1 and c2: coolup += 1
-        if c1 and c3: coolup = 0
+        if c1 and c2:
+            coolup += 1
+        if c1 and c3:
+            coolup = 0
 
     if (coolup - action.cooldown) < 0:
         raise Exception(e)
@@ -54,24 +57,34 @@ def check_range(intent, player, target) -> None:
 
 def check_visibility(intent, player, target, players, board) -> None:
     e = "Target is outside of sight."
-    if not intent.visible: return
+    if not intent.visible:
+        return
+
     sight = line(player.position, target)
     players_positions = [p.position for p in players]
     for position in sight[1:-1]:
-        if not board[position].seethrough: raise Exception(e)
-        if position in players_positions: raise Exception(e)
+
+        if not board[position].seethrough:
+            raise Exception(e)
+
+        if position in players_positions:
+            raise Exception(e)
 
 
 def check_walkability(intent, target, board) -> None:
     e = "Target is not accessible."
-    if not intent.walkable: return
+    if not intent.walkable:
+        return
+
     if board[target].walkable:
         raise Exception(e)
 
 
 def check_availability(intent, target, party) -> None:
     e = "Target is not reachable."
-    if intent.available is None: return
+    if intent.available is None:
+        return
+
     players_positions = [p.position for p in party]
     if intent.available == target not in players_positions:
         raise Exception(e)

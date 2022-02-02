@@ -18,10 +18,12 @@ class Action:
     def __post_init__(self):
 
         e = "Action cost cannot be negative."
-        if self.cost < 0: raise Exception(e)
+        if self.cost < 0:
+            raise Exception(e)
 
         e = "Action cooldown cannot be negative."
-        if self.cooldown < 0: raise Exception(e)
+        if self.cooldown < 0:
+            raise Exception(e)
 
     def check(self, player, **kwargs) -> None:
         players = kwargs["players"]

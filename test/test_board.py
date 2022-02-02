@@ -1,8 +1,10 @@
 from core import board
 
+
 def test_cell():
     # Testing instanciation + types
     assert True
+
 
 def test_board():
     # Testing board load
@@ -11,4 +13,4 @@ def test_board():
     # Testing out-of-bounds position
     # Testing board length (shape)
     # Testing board dimensions
-    assert True 
+    assert True

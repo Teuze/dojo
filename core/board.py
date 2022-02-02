@@ -15,7 +15,7 @@ class Cell:
     walkable: bool = True
     seethrough: bool = True
 
-    def __repr(self, pname : str = "") -> str:
+    def __repr(self, pname: str = "") -> str:
 
         tiles = "(.) [.] <.> {.}"
 
@@ -27,7 +27,7 @@ class Cell:
 
         return result
 
-    def draw(self, pname : str = "") -> None:
+    def draw(self, pname: str = "") -> None:
         print(self.__repr(pname))
 
 
@@ -63,20 +63,20 @@ class Board:
         # Filling remaining cells
         for x in range(self.shape[0]):
             for y in range(self.shape[1]):
-                if (x,y) not in self.cells:
+                if (x, y) not in self.cells:
                     self.cells[x, y] = Cell()
 
     def __getitem__(self, pos: Position) -> Cell:
         return self.cells[pos]
 
-    def __repr(self, players = None) -> str:
+    def __repr(self, players=None) -> str:
         line: str = ""
         for x in range(self.shape[0]):
             for y in range(self.shape[1]):
                 # TODO: inject optional player names in that
-                line = line + self.cells[x,y]._repr() + " "
+                line = line + self.cells[x, y]._repr() + " "
             line = line[:-1] + "\n"
         return line[:-1]
 
-    def draw(self,players = None) -> None:
+    def draw(self, players=None) -> None:
         print(self.__repr(players))

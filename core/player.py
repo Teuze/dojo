@@ -1,7 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Tuple, List
 
-_playbook = lambda: ["Pass", "Move", "Suicide"]
+
+def _playbook():
+    return ["Pass", "Move", "Suicide"]
+
+
 _playfield = field(repr=False, default_factory=_playbook)
 
 
@@ -33,7 +37,8 @@ class Player:
             return Exception(e)
 
         e = "Level should be strictly positive."
-        if self.level <= 0: return Exception(e)
+        if self.level <= 0:
+            return Exception(e)
 
 
 @dataclass
@@ -47,19 +52,25 @@ class Players:
     def __post_init__(self) -> None:
 
         e = "Playing turn cannot be negative."
-        if self.playing < 0: raise Exception(e)
+        if self.playing < 0:
+            raise Exception(e)
 
         e = "Playing turn cannot be higher than player count."
-        if self.playing >= len(self.members): raise Exception(e)
+        if self.playing >= len(self.members):
+            raise Exception(e)
 
-        double_sort = lambda x: (x.level, self.members.count(x.team))
+        def double_sort(x):
+            return (x.level, self.members.count(x.team))
+
         self.members = sorted(self.members, key=double_sort, reverse=True)
 
     def spawn(self, new_player: Player) -> None:
 
         new_party = Players(self.members + [new_player])
         index = new_party.index(new_player)
-        if index < self.playing: self.playing += 1
+        if index < self.playing:
+            self.playing += 1
+
         self.members = new_party.members
 
     def kill(self, player_index: int) -> None:

@@ -32,17 +32,17 @@ class RadialZone:
         raise NotImplementedError()
 
     def sort(self) -> List[Position]:
+        """Sort positions by their distance to center (clockwise)."""
 
-      def radius(p: Position):
-          distance = abs(p[0] - self.center[0])
-          distance += abs(p[1] - self.center[1])
-          return distance
+        def radius(p: Position):
+            distance = abs(p[0] - self.center[0])
+            distance += abs(p[1] - self.center[1])
+            return distance
 
-      angle = lambda p: -atan2(p[0], p[1])
+        def double_sort(p):
+            return (radius(p), -atan2(p[0], p[1]))
 
-      double_sort = lambda p: (radius(p), angle(p))
-
-      return sorted(self.zone, key=double_sort)
+        return sorted(self.zone, key=double_sort)
 
 
 class Rhombus(RadialZone):
