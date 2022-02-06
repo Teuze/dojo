@@ -1,9 +1,9 @@
-from typing import Tuple, List
+from typing import Tuple
 from typing_extensions import TypeAlias
 
 Position: TypeAlias = Tuple[int, int]
 
-Zone: TypeAlias = List[Position]
+Range: TypeAlias = Tuple[int, int]
 
 
 def normalize_range(r: Tuple[int, int]) -> Tuple[int, int]:

@@ -2,9 +2,9 @@ from pydantic import validator
 from pydantic import BaseModel
 from pydantic import PositiveInt
 from typing import Optional
-from typing import Tuple
-from core.zone import RadialZone
+from core.zone import Zone
 from core import normalize_range
+from core import Range
 
 
 class Action(BaseModel):
@@ -16,7 +16,7 @@ class Action(BaseModel):
     visible: Optional[bool]
     walkable: Optional[bool]
     available: Optional[bool]
-    range: Tuple[int, int]
-    impact: RadialZone
+    range: Range
+    impact: Zone
 
     _range = validator("range", allow_reuse=True)(normalize_range)

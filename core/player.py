@@ -1,6 +1,6 @@
 from pydantic import BaseModel, PositiveInt, validator
-from typing import Tuple, List
-from core import Position
+from typing import List
+from core import Position, Range
 from core import normalize_range
 
 
@@ -12,9 +12,9 @@ class Player(BaseModel):
     team: str
     level: PositiveInt
     position: Position
-    health: Tuple[int, int]
-    actions: Tuple[int, int]
+    health: Range
+    actions: Range
     playbook: List[str]
 
-    _action = validator("action", allow_reuse=True)(normalize_range)
+    _action = validator("actions", allow_reuse=True)(normalize_range)
     _health = validator("health", allow_reuse=True)(normalize_range)

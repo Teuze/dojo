@@ -1,7 +1,7 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel  # validator
 from typing import Tuple, List
 
-from core import normalize_range
+# from core import normalize_range
 from core import Position
 from core.cell import Cell
 
@@ -15,4 +15,5 @@ class Board(BaseModel):
     spawn: List[Position]
     cells: List[Cell]
 
-    _shape = validator("shape", allow_reuse=True)(normalize_range)
+    # TODO: Use custom validator for board shape
+    # _shape = validator("shape", allow_reuse=True)(normalize_range)
