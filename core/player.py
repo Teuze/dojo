@@ -59,6 +59,18 @@ class Players:
         if self.playing >= len(self.members):
             raise Exception(e)
 
+        e = "Players cannot be on the same Position."
+        counts = [self.members.count(p.position) for p in self.members]
+        counts_sup1 = [c for c in counts if c>1]
+        if len(counts_sup1) > 0:
+            raise Exception(e)
+
+        e = "Players cannot have the same name."
+        counts = [self.members.count(p.name) for p in self.members]
+        counts_sup1 = [c for c in counts if c>1]
+        if len(counts_sup1) > 0:
+            raise Exception(e)
+
         def double_sort(x):
             return (x.level, self.members.count(x.team))
 
@@ -67,7 +79,7 @@ class Players:
     def spawn(self, new_player: Player) -> None:
 
         new_party = Players(self.members + [new_player])
-        index = new_party.index(new_player)
+        index = new_party.members.index(new_player)
         if index < self.playing:
             self.playing += 1
 

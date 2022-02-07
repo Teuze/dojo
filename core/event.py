@@ -25,9 +25,7 @@ class Action:
         if self.cooldown < 0:
             raise Exception(e)
 
-    def check(self, player, **kwargs) -> None:
-        players = kwargs["players"]
-        history = kwargs["history"]
+    def check_action(self, player, players, history) -> None:
         checking.check_presence(player, players)
         checking.check_turn(player, players)
         checking.check_playbook(self, player)
@@ -48,11 +46,7 @@ class Intent(Action):
     available: bool
     range: RadialZone
 
-    def check(self, target, player, **game) -> None:
-        players = game["players"]
-        history = game["history"]
-        board = game["board"]
-        super().check(player, players, history)
+    def check_target(self, target, player, players, board) -> None:
         checking.check_range(self, player, target)
         checking.check_walkability(self, target, board)
         checking.check_availability(self, target, players)
