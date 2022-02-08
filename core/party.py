@@ -12,7 +12,7 @@ class Party(BaseModel):
     playing: int = 0
 
     @validator("playing")
-    def playing_validation(cls, v, values):
+    def normalize_playing(cls, v, values):
         e1 = "Playing turn cannot be negative."
         e2 = "Playing turn cannot be higher than player count."
 
@@ -21,3 +21,21 @@ class Party(BaseModel):
 
         if v >= len(values["members"]):
             raise ValueError(e2)
+
+        return v
+
+    @validator("members")
+    def normalize_members(cls, v):
+        e = "Players cannot be on the same Position."
+        positions = [player.position for player in v]
+        counts = [positions.count(pos) for pos in positions]
+        counts_sup1 = [c for c in counts if c > 1]
+
+        if len(counts_sup1) > 0:
+            raise Exception(e)
+
+        def double_sort(x):
+            teams = [p.team for p in v]
+            return (x.level, -teams.count(x.team))
+
+        return sorted(v, key=lambda x: double_sort(x), reverse=True)
