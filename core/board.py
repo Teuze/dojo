@@ -17,7 +17,7 @@ class Board(BaseModel):
     cells: List[Cell]
     spawn: List[Position]
 
-    @validator('shape')
+    @validator("shape")
     def normalize_shape(cls, v):
         e = "Board dimensions should be strictly positive."
 
@@ -26,7 +26,7 @@ class Board(BaseModel):
 
         return v
 
-    @validator('cells')
+    @validator("cells")
     def normalize_cells(cls, v, values):
         e1 = "Not enough cells for board shape."
         e2 = "Too many cells for board shape."
@@ -48,10 +48,10 @@ class Board(BaseModel):
             if cell.position[0] < 0 or cell.position[1] < 0:
                 raise ValueError(e3)
 
-            if "shape" in values and cell.position[0] >= values['shape'][0]:
+            if "shape" in values and cell.position[0] >= values["shape"][0]:
                 raise ValueError(e3)
 
-            if "shape" in values and cell.position[1] >= values['shape'][1]:
+            if "shape" in values and cell.position[1] >= values["shape"][1]:
                 raise ValueError(e3)
 
         cell_position_counts = [v.count(cell.position) for cell in v]
@@ -62,7 +62,7 @@ class Board(BaseModel):
 
         return sorted(v, key=lambda x: x.position)
 
-    @validator('spawn')
+    @validator("spawn")
     def normalize_spawn(cls, v, values):
         e1 = "Not enough spawn spots to play."
         e2 = "Too many spawn spots for board object."

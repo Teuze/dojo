@@ -35,7 +35,6 @@ class Zone(BaseModel):
 
 
 class Rhombus(Zone):
-
     def zone(self) -> List[Position]:
         ra, rb = self.radius
         cx, cy = self.center
@@ -55,7 +54,6 @@ class Rhombus(Zone):
 
 
 class Square(Zone):
-
     def zone(self) -> List[Position]:
         ra, rb = self.radius
         cx, cy = self.center
@@ -75,7 +73,6 @@ class Square(Zone):
 
 
 class Plus(Zone):
-
     def zone(self) -> List[Position]:
         ra, rb = self.radius
         cx, cy = self.center
@@ -94,7 +91,6 @@ class Plus(Zone):
 
 
 class Cross(Zone):
-
     def zone(self) -> List[Position]:
         ra, rb = self.radius
         cx, cy = self.center
