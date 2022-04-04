@@ -8,8 +8,8 @@ class Player(BaseModel):
 
     """Dataclass defining character statistics."""
 
-    name: constr(min_length=4, max_length=24, strip_whitespace=True)
-    team: constr(min_length=4, max_length=24, strip_whitespace=True)
+    name: str
+    team: str
     level: PositiveInt
     position: Position
     health: Range
