@@ -16,4 +16,11 @@ class Game(BaseModel):
     events: List[Event]
     states: List[Party]
 
-    def update(self, event: Event): pass
+    # TODO: implement recursive checks
+
+    def update(self, event: Event):
+        board = self.board
+        events = self.events + [event]
+        states = self.states + [self.party]
+        party = event.happen(self.party)
+        return Game(party, board, events, states)

@@ -51,6 +51,7 @@ class Event(BaseModel):
         return v
 
     def happen(self, players: Party) -> Party:
+        # TODO: unf*ck this mess
         actions = self.player.actions
         new_players = deepcopy(players)
         new_player = deepcopy(self.player)

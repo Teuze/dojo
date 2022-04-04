@@ -1,25 +1,50 @@
+#!/usr/bin/python3
+
+"""
+Dojo Tactics Server
+
+Usage:
+    dojo BOARD PARTY
+    markov -h | --help
+    markov --version
+
+Options:
+    -h --help     Show this screen.
+    --version     Show version.
+"""
+
+__author__ = "Richard Jarry"
+__version__ = "0.1"
+
+import uvicorn
+
+from docopt import docopt
 from fastapi import FastAPI
 
-# from pydantic.dataclasses import dataclass
+from core.game import Game
+from core.event import Event
 
-import core.game
-import core.board
-import core.event
-import core.player
+if __name__ == "__main__":
 
-app = FastAPI()
+    args = docopt(__doc__)
 
+    app = FastAPI()
 
-@app.get("/board")
-def get_board():
-    return
+    # TODO: change this to load board+players
+    game = Game(args["PARTY"], args["BOARD"])
 
+    @app.get("/players")
+    def get_players():
+        return game.party
 
-@app.get("/players")
-def get_players():
-    return
+    @app.get("/board")
+    def get_board():
+        return game.board
 
+    @app.put("/events")
+    def put_events(event: Event):
+        game = game.update(event)
+        return game
 
-@app.put("/action")
-def put_action(action: core.event.Action):
-    return
+    # TODO: load toml defaults
+    uvicorn.run(app)
