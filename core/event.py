@@ -47,7 +47,7 @@ class Event(BaseModel):
             dx = target[0] - player.position[0]
             dy = target[1] - player.position[1]
             if (dx, dy) not in Rhombus(radius=action.range).zone():
-                raise Exception(e)
+                raise ValueError(e)
         return v
 
     def happen(self, players: Party) -> Party:
