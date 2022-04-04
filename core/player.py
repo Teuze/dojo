@@ -1,4 +1,4 @@
-from pydantic import BaseModel, PositiveInt, validator, constr
+from pydantic import BaseModel, PositiveInt, validator
 from typing import List
 from core import Position, Range
 from core import normalize_range
