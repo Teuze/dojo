@@ -48,6 +48,7 @@ if __name__ == "__main__":
     game = Game(board=board, party=party, events=[], states=[])
 
     # TODO: Implement authenticated access to endpoints
+    # TODO: Implement root endpoint (game summary?)
 
     @app.get("/players")
     def get_players():
@@ -56,6 +57,10 @@ if __name__ == "__main__":
     @app.get("/board")
     def get_board():
         return game.board
+
+    @app.get("/events")
+    def get_events():
+        return game.events
 
     @app.put("/events")
     def put_events(event: Event):

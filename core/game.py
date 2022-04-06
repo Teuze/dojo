@@ -17,6 +17,7 @@ class Game(BaseModel):
     states: List[Party]
 
     # TODO: implement recursive checks
+    # TODO: Implement winning condition(s)
 
     def update(self, event: Event):
         board = self.board
