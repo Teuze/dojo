@@ -1,11 +1,11 @@
 from pydantic import BaseModel, validator
 
 from copy import deepcopy
+from typing import List
 
 from core import Position
 from core.action import Action
 from core.player import Player
-from core.party import Party
 from core.zone import Rhombus
 
 
@@ -50,7 +50,7 @@ class Event(BaseModel):
                 raise ValueError(e)
         return v
 
-    def happen(self, players: Party) -> Party:
+    def happen(self, players: List[Player]) -> List[Player]:
         # TODO: unf*ck this mess
         actions = self.player.actions
         new_players = deepcopy(players)

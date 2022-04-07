@@ -4,7 +4,7 @@
 Dojo Tactics Server
 
 Usage:
-    server <board> <party>
+    server <board> <players>
     server -h | --help
     server --version
 
@@ -22,13 +22,9 @@ import os
 from docopt import docopt
 from fastapi import FastAPI
 
-# from core.cell import Cell
+from core import Position
 from core.board import Board
-
 from core.player import Player
-from core.party import Party
-
-# from core.action import Action
 from core.event import Event
 from core.game import Game
 
@@ -38,37 +34,46 @@ if __name__ == "__main__":
 
     app = FastAPI()
     
-    path = args["<party>"]
+    path = args["<players>"]
     files = os.listdir(path)
     players = [Player.parse_file(path+f) for f in files]
-    party = Party(members=players)
 
     board = Board.parse_file(args["<board>"])
 
-    game = Game(board=board, party=party, events=[], states=[])
+    game = Game(board=board, players=players, events=[], states=[])
 
     # TODO: Implement authenticated access to endpoints
-    # TODO: Implement root endpoint (game summary?)
 
-    @app.get("/players")
-    def get_players():
-        return game.party
+    @app.get("/")
+    def get_root():
+        return game
+
+    @app.get("/turn")
+    def get_board():
+        return game.turn
 
     @app.get("/board")
     def get_board():
         return game.board
 
+    @app.get("/players")
+    def get_players():
+        return game.players
+
     @app.get("/events")
     def get_events():
         return game.events
 
-    @app.put("/events")
-    def put_events(event: Event):
+    @app.post("/play")
+    def post_event(player_name: str, action_name: str, position: Position):
+        action = ... # TODO: enumerate valid actions?
+        player = ... # TODO: verify authed acces here?
+        event = Event(action, player, position)
         game = game.update(event)
         return game
 
     # TODO: load toml defaults
     # board default: assets/maps/map.json
-    # party default: assets/entities/*
+    # players default: assets/entities/*
     
     uvicorn.run(app)
