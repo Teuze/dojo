@@ -49,10 +49,15 @@ class Game(BaseModel):
 
         return v
 
+    @validator("board")
+    def normalize_board(cls,v):
+        e = "Target is outside board dimensions."
+        # TODO: Implement board dimensions check (action+players)
+        return v
+
     @validator("players")
     def normalize_players(cls, v):
         e1 = "Players cannot be on the same Position."
-        e2 = "Players cannot be outside board dimensions."
 
         positions = [player.position for player in v]
         counts = [positions.count(pos) for pos in positions]
@@ -60,8 +65,6 @@ class Game(BaseModel):
 
         if len(counts_sup1) > 0:
             raise ValueError(e1)
-
-        # TODO: Implement board dimensions check
 
         def double_sort(x):
             teams = [p.team for p in v]
@@ -71,7 +74,6 @@ class Game(BaseModel):
 
     @validator("events")
     def normalize_events(cls, v):
-        # TODO: Implement board dimensions check
         # TODO: Implement cooldown check
-        # TODO: Implement action player turn verification
+        # TODO: Implement action player turn verification?
         return v
