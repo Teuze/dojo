@@ -24,46 +24,32 @@ class Game(BaseModel):
         # if event.action.__name__ == "Pass": t += 1
         return Game(turn=t, board=b, events=e, players=p)
 
-    @property
-    def finished(self) -> bool:
-        pass
-
-    @property
-    def winners(self) -> List[Player]:
-        pass
-
-    @property
-    def losers(self) -> List[Player]:
-        pass
-
     @validator("turn")
     def normalize_turn(cls, v, values):
-        e1 = "Playing turn cannot be negative."
-        e2 = "Playing turn cannot be higher than player count."
-
-        if v < 0:
-            raise ValueError(e1)
-
-        if v >= len(values["players"]):
-            raise ValueError(e2)
-
+        e = "Playing turn is invalid."
+        if v < 0 or v >= len(values["players"]):
+            raise ValueError(e)
         return v
 
     @validator("board")
-    def normalize_board(cls,v):
-        e = "Target is outside board dimensions."
-        # TODO: Implement board dimensions check (action+players)
+    def normalize_board(cls, v, values):
+        e = "Player is outside board dimensions."
+        positions = [player.position for player in values["players"]]
+        for p in positions:
+            c0 = p[0] > v.shape[0] or p[0] < 0
+            c1 = p[1] > v.shape[1] or p[1] < 0
+            if c0 or c1:
+                raise ValueError(e)
         return v
 
     @validator("players")
     def normalize_players(cls, v):
         e1 = "Players cannot be on the same Position."
-
         positions = [player.position for player in v]
         counts = [positions.count(pos) for pos in positions]
-        counts_sup1 = [c for c in counts if c > 1]
+        counts = [c for c in counts if c > 1]
 
-        if len(counts_sup1) > 0:
+        if len(counts) > 0:
             raise ValueError(e1)
 
         def double_sort(x):
@@ -74,6 +60,5 @@ class Game(BaseModel):
 
     @validator("events")
     def normalize_events(cls, v):
-        # TODO: Implement cooldown check
-        # TODO: Implement action player turn verification?
+        # TODO: Implement dynamic checks on update
         return v
