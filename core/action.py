@@ -28,10 +28,23 @@ class Action(BaseModel):
     def apply(self, position, player, players):
         raise NotImplementedError()
 
+class Pass(Action):
+
+    cost: NonNegativeInt = 0
+    cooldown: NonNegativeInt = 0
+    visible: Optional[bool] = None
+    walkable: Optional[bool] = None
+    available: Optional[bool] = None
+    range: Range = (0,0)
+    impact: Zone = Rhombus()
+
+    def apply(self, position, player, players):
+        pass
 
 class Move(Action):
 
     cost: NonNegativeInt = 1
+    cooldown: NonNegativeInt = 0
     visible: Optional[bool] = None
     walkable: Optional[bool] = True
     available: Optional[bool] = True
