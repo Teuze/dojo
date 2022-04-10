@@ -51,10 +51,9 @@ class Event(BaseModel):
         return v
 
     def happen(self, players: List[Player]) -> List[Player]:
-        # TODO: unf*ck this mess
         actions = self.player.actions
-        new_players = deepcopy(players)
-        new_player = deepcopy(self.player)
-        result = self.action.apply(self.target, new_player, new_players)
-        new_player.actions = (actions[0] - self.action.cost, actions[1])
+        players_ = deepcopy(players)
+        player = deepcopy(self.player)
+        result = self.action.apply(self.target, player, players_)
+        player.actions = (actions[0] - self.action.cost, actions[1])
         return result

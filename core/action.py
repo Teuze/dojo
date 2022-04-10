@@ -39,7 +39,7 @@ class Pass(Action):
     impact: Zone = Rhombus()
 
     def apply(self, position, player, players):
-        pass
+        return players
 
 class Move(Action):
 
@@ -52,7 +52,7 @@ class Move(Action):
     impact: Zone = Rhombus()
 
     def apply(self, position, player, players):
-        index = players.members.index(player)
+        index = players.index(player)
         player.position = position
-        players.members[index] = player
+        players[index] = player
         return players
