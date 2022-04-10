@@ -1,6 +1,7 @@
 from pydantic import BaseModel, NonNegativeInt, validator
 
 from typing import List
+from copy import deepcopy
 
 from core.player import Player
 from core.board import Board
@@ -11,36 +12,36 @@ class Game(BaseModel):
 
     """Dataclass containing the game history and current state."""
 
-    turn: NonNegativeInt = 0
-    board: Board
-    events: List[Event]
     players: List[Player]
+    events: List[Event]
+    board: Board
+
+    turn: NonNegativeInt = 0
 
     def update(self, event: Event):
+        e1 = "It is not player's turn."
+        if event.player != self.players[self.turn]:
+            raise ValueError(e1)
+
+        e2 = "Action has not cooled down yet."
+        last_use : int = 0 # TODO: implement this
+        cooldown : int = event.action.cooldown
+        if cooldown > last_use:
+            raise ValueError(e2)
+
         t = self.turn
         b = self.board
         e = self.events + [event]
-        p = event.happen(t, b, e, p)
-        # if event.action.__name__ == "Pass": t += 1
-        return Game(turn=t, board=b, events=e, players=p)
+        p = event.happen(deepcopy(self.players))
 
-    @validator("turn")
-    def normalize_turn(cls, v, values):
-        e = "Playing turn is invalid."
-        if v < 0 or v >= len(values["players"]):
-            raise ValueError(e)
-        return v
+        # TODO: remove all players with zero health or less
+        # TODO: adjust playing turn accordingly
 
-    @validator("board")
-    def normalize_board(cls, v, values):
-        e = "Player is outside board dimensions."
-        positions = [player.position for player in values["players"]]
-        for p in positions:
-            c0 = p[0] > v.shape[0] or p[0] < 0
-            c1 = p[1] > v.shape[1] or p[1] < 0
-            if c0 or c1:
-                raise ValueError(e)
-        return v
+        if event.action.__class__.__name__ == "Pass": t += 1
+
+        g = Game(turn=t, board=b, events=e, players=p)
+
+        return g
 
     @validator("players")
     def normalize_players(cls, v):
@@ -60,5 +61,28 @@ class Game(BaseModel):
 
     @validator("events")
     def normalize_events(cls, v):
-        # TODO: Implement dynamic checks on update
+        return v
+
+    @validator("board")
+    def normalize_board(cls, v, values):
+        if "player" not in values:
+            return v
+
+        e = "Player is outside board dimensions."
+        positions = [player.position for player in values["players"]]
+        for p in positions:
+            c0 = p[0] > v.shape[0] or p[0] < 0
+            c1 = p[1] > v.shape[1] or p[1] < 0
+            if c0 or c1:
+                raise ValueError(e)
+        return v
+
+    @validator("turn")
+    def normalize_turn(cls, v, values):
+        if "player" not in values:
+            return v
+
+        e = "Playing turn is invalid."
+        if v < 0 or v >= len(values["players"]):
+            raise ValueError(e)
         return v
