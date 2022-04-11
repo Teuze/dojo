@@ -25,6 +25,7 @@ from fastapi import FastAPI
 from core import Position
 from core.board import Board
 from core.player import Player
+from core.action import *
 from core.event import Event
 from core.game import Game
 
@@ -41,8 +42,6 @@ if __name__ == "__main__":
     board = Board.parse_file(args["<board>"])
 
     game = Game(board=board, players=players, events=[], states=[])
-
-    # TODO: Implement authenticated access to endpoints
 
     @app.get("/")
     def get_root():
@@ -65,11 +64,17 @@ if __name__ == "__main__":
         return game.events
 
     @app.post("/play")
-    def post_event(player_name: str, action_name: str, position: Position):
-        action = ... # TODO: enumerate valid actions?
-        player = ... # TODO: verify authed acces here?
-        event = Event(action, player, position)
-        game = game.update(event)
+    # TODO: Implement authenticated access to this endpoint
+    def post_event(player_name: str, action_name: str, x: int, y: int):
+        valid_actions = {a.__name__: a for a in Action.__subclasses__()()}
+        valid_players = {p.name: p for p in game.players}
+
+        action = valid_actions[action_name]
+        player = valid_players[player_name]
+
+        event = Event(action=action, player=player, target=(x, y))
+        
+        game.update(event)
         return game
 
     # TODO: load toml defaults

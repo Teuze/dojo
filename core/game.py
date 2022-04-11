@@ -18,30 +18,36 @@ class Game(BaseModel):
 
     turn: NonNegativeInt = 0
 
-    def update(self, event: Event):
+    def update(self, event: Event) -> None:
         e1 = "It is not player's turn."
         if event.player != self.players[self.turn]:
             raise ValueError(e1)
 
         e2 = "Action has not cooled down yet."
-        last_use : int = 0 # TODO: implement this
+        last_use : int = 0 # TODO: implement cooldown
         cooldown : int = event.action.cooldown
         if cooldown > last_use:
             raise ValueError(e2)
 
         t = self.turn
-        b = self.board
-        e = self.events + [event]
-        p = event.happen(deepcopy(self.players))
-
-        # TODO: remove all players with zero health or less
-        # TODO: adjust playing turn accordingly
+        r = event.happen(deepcopy(self.players))
 
         if event.action.__class__.__name__ == "Pass": t += 1
 
-        g = Game(turn=t, board=b, events=e, players=p)
+        # Remove all players with zero health or less
+        # Adjust playing turn accordingly
 
-        return g
+        for player in r:
+            if player.health[0] <= 0:
+                t = (t-1) if player.index < t else t
+                del player
+
+        # Change game in-place
+        self.turn = t % len(r)
+        self.events += [event]
+        self.players = r
+
+        return
 
     @validator("players")
     def normalize_players(cls, v):
@@ -58,10 +64,6 @@ class Game(BaseModel):
             return (x.level, -teams.count(x.team))
 
         return sorted(v, key=lambda x: double_sort(x), reverse=True)
-
-    @validator("events")
-    def normalize_events(cls, v):
-        return v
 
     @validator("board")
     def normalize_board(cls, v, values):
@@ -85,4 +87,9 @@ class Game(BaseModel):
         e = "Playing turn is invalid."
         if v < 0 or v >= len(values["players"]):
             raise ValueError(e)
+        return v
+
+    @validator("events")
+    def normalize_events(cls, v):
+        # TODO: Add event names in history?
         return v
