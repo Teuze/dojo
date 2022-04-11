@@ -66,7 +66,7 @@ if __name__ == "__main__":
     @app.post("/play")
     # TODO: Implement authenticated access to this endpoint
     def post_event(player_name: str, action_name: str, x: int, y: int):
-        valid_actions = {a.__name__: a for a in Action.__subclasses__()()}
+        valid_actions = {a.__name__: a() for a in Action.__subclasses__()}
         valid_players = {p.name: p for p in game.players}
 
         action = valid_actions[action_name]

@@ -15,6 +15,7 @@ class Action(BaseModel):
 
     """Dataclass defining playable actions."""
 
+    name: str
     cost: NonNegativeInt
     cooldown: NonNegativeInt
     visible: Optional[bool]
@@ -30,6 +31,7 @@ class Action(BaseModel):
 
 class Pass(Action):
 
+    name: str = "Pass"
     cost: NonNegativeInt = 0
     cooldown: NonNegativeInt = 0
     visible: Optional[bool] = None
@@ -43,6 +45,7 @@ class Pass(Action):
 
 class Move(Action):
 
+    name: str = "Move"
     cost: NonNegativeInt = 1
     cooldown: NonNegativeInt = 0
     visible: Optional[bool] = None
