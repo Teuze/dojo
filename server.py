@@ -22,7 +22,13 @@ import os
 import secrets
 
 from docopt import docopt
+
 from fastapi import FastAPI
+from fastapi import Depends
+from fastapi import status
+from fastapi import HTTPException
+from fastapi.security import HTTPBasic
+from fastapi.security import HTTPBasicCredentials
 
 from core.board import Board
 from core.player import Player
@@ -33,16 +39,41 @@ from core.game import Game
 if __name__ == "__main__":
 
     args = docopt(__doc__, version=__version__)
-
-    app = FastAPI()
     
     path = args["<players>"]
     files = os.listdir(path)
+
     players = [Player.parse_file(path+f) for f in files]
 
     board = Board.parse_file(args["<board>"])
 
     game = Game(board=board, players=players, events=[], states=[])
+
+    # Prepare auth token for each player (names should be unique)
+    tokens = {p.name: secrets.token_hex(12) for p in players}
+
+    app = FastAPI()
+    sec = HTTPBasic()
+    print(tokens)
+
+    def auth(credentials: HTTPBasicCredentials = Depends(sec)):
+        # Pre-fetch password to even out lookup times
+        if credentials.username in tokens.keys():
+            password = tokens[credentials.username]
+        else:
+            password = None
+
+        c1 = credentials.username in tokens.keys()
+        c2 = secrets.compare_digest(credentials.password, password)
+
+        if c1 and c2:
+            return credentials.username
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect player name or password",
+            headers={"WWW-Authenticate": "Basic"}
+        )
 
     @app.get("/")
     def get_root():
@@ -65,8 +96,7 @@ if __name__ == "__main__":
         return game.events
 
     @app.post("/play")
-    # TODO: Implement authenticated access to this endpoint
-    def post_event(player_name: str, action_name: str, x: int, y: int):
+    def post_event(action_name: str, x: int, y: int, player_name=Depends(auth)):
         valid_actions = {a.__name__: a() for a in Action.__subclasses__()}
         valid_players = {p.name: p for p in game.players}
 
