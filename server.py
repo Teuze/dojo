@@ -19,10 +19,11 @@ __version__ = "0.1"
 import uvicorn
 import os
 
+import secrets
+
 from docopt import docopt
 from fastapi import FastAPI
 
-from core import Position
 from core.board import Board
 from core.player import Player
 from core.action import *

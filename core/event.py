@@ -1,6 +1,5 @@
 from pydantic import BaseModel, validator
 
-from copy import deepcopy
 from typing import List
 
 from core import Position
@@ -52,8 +51,6 @@ class Event(BaseModel):
 
     def happen(self, players: List[Player]) -> List[Player]:
         actions = self.player.actions
-        players_ = deepcopy(players)
-        player = deepcopy(self.player)
-        result = self.action.apply(self.target, player, players_)
-        player.actions = (actions[0] - self.action.cost, actions[1])
+        result = self.action.apply(self.target, self.player, players)
+        self.player.actions = (actions[0] - self.action.cost, actions[1])
         return result

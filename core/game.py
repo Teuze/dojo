@@ -42,7 +42,7 @@ class Game(BaseModel):
                 t = (t-1) if player.index < t else t
                 del player
 
-        # Change game in-place
+        # Update game in-place
         self.turn = t % len(r)
         self.events += [event]
         self.players = r
@@ -91,5 +91,4 @@ class Game(BaseModel):
 
     @validator("events")
     def normalize_events(cls, v):
-        # TODO: Add event names in history?
         return v
