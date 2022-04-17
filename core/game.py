@@ -6,6 +6,7 @@ from copy import deepcopy
 from core.player import Player
 from core.board import Board
 from core.event import Event
+from core.zone import line
 
 
 class Game(BaseModel):
@@ -24,10 +25,29 @@ class Game(BaseModel):
             raise ValueError(e1)
 
         e2 = "Action has not cooled down yet."
-        last_use : int = 0 # TODO: implement cooldown
         cooldown : int = event.action.cooldown
+        last_use : int = 0
+        for e in self.events[::-1]:
+            c1 = e.player.name == event.player.name
+            c2 = e.action.name == event.action.name
+            c3 = e.action.name == "Pass"
+            if c1 and c3:
+                last_use += 1
+            if c1 and c2:
+                break
         if cooldown > last_use:
             raise ValueError(e2)
+
+        e3 = "Target is out of sight."
+        positions = line(event.player.position, event.target)
+        for pos in positions[1:-1]:
+            cell = Board.cells[Board.cells.index(pos)]
+            c1 = not cell.seethrough
+            c2 = pos in [p.position for p in self.players]
+            if c1 or c2:
+                raise ValueError(e3)
+
+        # TODO: Implement availability
 
         t = self.turn
         r = event.happen(deepcopy(self.players))
